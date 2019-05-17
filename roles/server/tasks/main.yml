@@ -1,0 +1,36 @@
+---
+# This playbook provides basic elements of a server we would like to maintain
+- name: update apt-cache
+  become: true
+  apt:
+    upgrade: yes
+    update_cache: yes
+
+- name: install packages for sysadmin
+  apt:
+    pkg: [
+      "mysql-server",
+      "php-fpm",
+      "php-mysql",
+      "nginx",
+      "php-xml",
+      "php-gd",
+      "php-mbstring",
+      "python3-pip"
+    ]
+    state: present
+
+- pip:
+    name:
+      - PyMySQL
+      - boto3==1.9.113
+
+- name: Create the across the nginx conf
+  become: yes
+  template:
+    src: "templates/nginx.conf"
+    dest: "/etc/nginx/sites-enabled/default"
+
+
+
+

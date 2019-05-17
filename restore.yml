@@ -1,0 +1,8 @@
+---
+- name: Restore
+  become: yes
+  user: ubuntu
+  hosts: webserver
+  gather_facts: no
+  roles:
+    - restore

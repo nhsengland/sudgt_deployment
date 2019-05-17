@@ -1,0 +1,30 @@
+---
+- name: Install all apt dependencies
+  become: yes
+  user: ubuntu
+  hosts: webserver
+  gather_facts: no
+  roles:
+    - server
+
+- name: Setup mysql
+  become: yes
+  user: ubuntu
+  hosts: webserver
+  roles:
+    - db
+
+- name: Setup backup
+  become: yes
+  user: ubuntu
+  hosts: webserver
+  roles:
+    - backup
+
+- name: Restore from backup
+  become: yes
+  user: ubuntu
+  hosts: webserver
+  roles:
+    - role: restore
+      when: DATE is defined

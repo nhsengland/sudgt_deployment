@@ -1,0 +1,26 @@
+- name: Ensure mysql is running and starts on boot
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+  become: yes
+
+- mysql_user:
+    name: "{{ DB_USER }}"
+    password: "{{ DB_PASSWORD }}"
+    priv: "*.*:ALL"
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- mysql_db:
+    name: "{{ DB_NAME }}"
+    state: present
+    login_user: "{{ DB_USER }}"
+    login_password: "{{ DB_PASSWORD }}"
+    login_host: localhost
+
+- name: Deletes anonymous MySQL server user for localhost
+  mysql_user:
+    user: ""
+    state: "absent"
+    login_unix_socket: /var/run/mysqld/mysqld.sock

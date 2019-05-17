@@ -1,0 +1,82 @@
+- name: Deletes the restore dir if it exists
+  file:
+    path: /tmp/restore/
+    state: absent
+    owner: ubuntu
+
+- name: Creates the restore dir
+  file:
+    path: /tmp/restore/
+    state: directory
+    owner: ubuntu
+
+- name: Get the bucket
+  aws_s3:
+    bucket: "{{ AWS_BUCKET_NAME }}"
+    object: "backups/{{ DATE }}-sudgt.tgz"
+    dest: /tmp/restore/to_restore.tgz
+    aws_access_key: "{{ AWS_ACCESS_KEY_ID }}"
+    aws_secret_key: "{{ AWS_SECRET_ACCESS_KEY }}"
+    mode: get
+
+- name: Deletes the old www directory
+  file:
+    path: /var/wwww/html/sudgt
+    state: absent
+    owner: ubuntu
+
+- name: Unzips the file
+  unarchive:
+    src: /tmp/restore/to_restore.tgz
+    dest: /tmp/restore/
+    remote_src: yes
+
+- name: html directory
+  file:
+    path: /var/www/html
+    state: directory
+  become: true
+
+# Ansible doesn't currently support copying directories
+# on remote sources
+- name: Copy the file
+  command: mv /tmp/restore/files /var/www/html/sudgt
+  become: true
+
+# import is not idempotent so drop the database and
+# recreate it
+- mysql_db:
+    name: "{{ DB_NAME }}"
+    state: absent
+    login_user: "{{ DB_USER }}"
+    login_password: "{{ DB_PASSWORD }}"
+    login_host: localhost
+
+- mysql_db:
+    name: "{{ DB_NAME }}"
+    state: present
+    login_user: "{{ DB_USER }}"
+    login_password: "{{ DB_PASSWORD }}"
+    login_host: localhost
+
+- name: Restore the mysql database
+  mysql_db:
+    state: import
+    name: "{{ DB_NAME }}"
+    login_user: "{{ DB_USER }}"
+    login_password: "{{ DB_PASSWORD }}"
+    login_host: localhost
+    target: /tmp/restore/db_backup.sql
+
+- name: Restart service nginx
+  service:
+    name: nginx
+    state: restarted
+
+- name: Restart service php fpm
+  service:
+    name: php7.2-fpm
+    state: restarted
+
+
+

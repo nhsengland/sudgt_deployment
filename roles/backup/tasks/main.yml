@@ -1,0 +1,44 @@
+- name: Creates AWS dir
+  file:
+    path: "/home/ubuntu/.aws/"
+    state: directory
+    owner: ubuntu
+
+- name: create AWS credentials
+  template:
+    src: templates/aws_credentials.ini
+    dest: /home/ubuntu/.aws/credentials
+
+- name: create AWS config
+  template:
+    src: templates/aws_config.ini
+    dest: /home/ubuntu/.aws/config
+
+- name: Creates backup scripts dir
+  file:
+    path: "/home/ubuntu/backup_scripts/"
+    state: directory
+    owner: ubuntu
+
+- name: Create the backup shell script
+  template:
+    src: "templates/backup.sh.jinja2"
+    dest: "/home/ubuntu/backup_scripts/backup.sh"
+    owner: ubuntu
+    mode: 0741
+
+- name: Create the backup python script
+  become: yes
+  template:
+    src: "templates/backup.py"
+    dest: "/home/ubuntu/backup_scripts/backup.py"
+    owner: ubuntu
+    mode: 0741
+
+- name: fire the backup cron
+  cron:
+    name: "backup"
+    minute: "0"
+    hour: "1"
+    user: "ubuntu"
+    job: "/home/ubuntu/backup_scripts/backup.sh"
