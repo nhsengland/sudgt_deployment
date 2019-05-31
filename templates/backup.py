@@ -27,8 +27,7 @@ def dump_database(db_name, db_user, db_password):
     )
 
     print(f"Running: {command}")
-    with open(backup_name, "wb") as out:
-        subprocess.check_call(command, stdout=out, shell=True)
+    subprocess.check_call(command, shell=True)
 
     if not os.path.exists(db_backup):
         raise Exception(f"Database dump not saved for: {db_name}")
