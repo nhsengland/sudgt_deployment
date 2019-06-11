@@ -28,3 +28,10 @@
   roles:
     - role: restore
       when: DATE is defined
+
+- name: Restart
+  become: yes
+  user: ubuntu
+  hosts: webserver
+  roles:
+    - restart

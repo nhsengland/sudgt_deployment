@@ -4,3 +4,4 @@ hosts.dev
 *.sql
 *.tar.gz
 .vscode/
+hosts
