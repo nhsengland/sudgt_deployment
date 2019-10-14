@@ -43,13 +43,13 @@
   command: mv /tmp/restore/files /var/www/html/sudgt
   become: true
 
-- name: Change the ownership of the directory
+- name: Change the permissions of the directory
   become: true
   file:
     path: /var/www/html/sudgt
     state: directory
     recurse: yes
-    group: www-data
+    mode: u=rwx,g=rwx,o=rwx
 
 # import is not idempotent so drop the database and
 # recreate it
