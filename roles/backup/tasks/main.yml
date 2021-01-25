@@ -42,3 +42,25 @@
     hour: "1"
     user: "ubuntu"
     job: "/home/ubuntu/backup_scripts/backup.sh"
+
+- name: Create the check disk shell script
+  template:
+    src: "templates/check_disk_space.sh.jinja2"
+    dest: "/home/ubuntu/backup_scripts/check_disk_space.sh"
+    owner: ubuntu
+    mode: 0741
+
+- name: Create the check disk space python script
+  become: yes
+  template:
+    src: "templates/check_disk_space.py"
+    dest: "/home/ubuntu/backup_scripts/check_disk_space.py"
+    owner: ubuntu
+    mode: 0741
+
+- name: fire the check disk space cron
+  cron:
+    name: "backup"
+    minute: "10"
+    user: "ubuntu"
+    job: "/home/ubuntu/backup_scripts/check_disk_space.sh"

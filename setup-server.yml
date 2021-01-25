@@ -3,7 +3,7 @@
   become: yes
   user: ubuntu
   hosts: webserver
-  gather_facts: no
+  gather_facts: yes
   roles:
     - server
 
@@ -14,7 +14,7 @@
   roles:
     - db
 
-- name: Setup backup
+- name: Setup backup and disk space cron jobs
   become: yes
   user: ubuntu
   hosts: webserver
