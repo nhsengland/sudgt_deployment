@@ -37,6 +37,11 @@
     state: directory
   become: true
 
+- name: remove the existing directory
+  file:
+    state: absent
+    path: /var/www/html/sudgt
+
 # Ansible doesn't currently support copying directories
 # on remote sources
 - name: Copy the file
