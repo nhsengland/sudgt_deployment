@@ -60,7 +60,7 @@
 
 - name: fire the check disk space cron
   cron:
-    name: "backup"
+    name: "check disk space"
     minute: "10"
     user: "ubuntu"
     job: "/home/ubuntu/backup_scripts/check_disk_space.sh"
